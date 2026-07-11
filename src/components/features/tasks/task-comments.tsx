@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Loader2, Trash2 } from "lucide-react"
+import { Loader2, Send, Trash2 } from "lucide-react"
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -29,16 +29,20 @@ export function TaskComments({ workspaceId, taskId, members }: TaskCommentsProps
   const currentUserRole = members.find((m) => m.user_id === user?.id)?.role
   const canModerate = currentUserRole === "owner" || currentUserRole === "admin"
 
-  async function handleSubmit(event: React.FormEvent) {
-    event.preventDefault()
+  async function submitComment() {
     const trimmed = body.trim()
-    if (!trimmed) return
+    if (!trimmed || createComment.isPending) return
     try {
       await createComment.mutateAsync({ body: trimmed })
       setBody("")
     } catch {
       // Failure toast is raised centrally by the mutation hook.
     }
+  }
+
+  function handleSubmit(event: React.FormEvent) {
+    event.preventDefault()
+    submitComment()
   }
 
   return (
@@ -93,22 +97,35 @@ export function TaskComments({ workspaceId, taskId, members }: TaskCommentsProps
         <p className="text-sm text-muted-foreground">No comments yet.</p>
       )}
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-2">
-        <Textarea
-          value={body}
-          onChange={(event) => setBody(event.target.value)}
-          placeholder="Write a comment..."
-          rows={2}
-        />
-        <Button
-          type="submit"
-          size="sm"
-          className="self-end"
-          disabled={!body.trim() || createComment.isPending}
-        >
-          {createComment.isPending ? <Loader2 className="size-4 animate-spin" /> : null}
-          Comment
-        </Button>
+      <form onSubmit={handleSubmit}>
+        <div className="flex items-end gap-2 rounded-2xl border border-input bg-background p-1.5 pl-3.5 transition-colors focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 dark:bg-input/30">
+          <Textarea
+            value={body}
+            onChange={(event) => setBody(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault()
+                submitComment()
+              }
+            }}
+            placeholder="Write a comment…"
+            rows={1}
+            className="max-h-40 min-h-0 flex-1 resize-none border-0 bg-transparent px-0 py-1.5 shadow-none focus-visible:border-0 focus-visible:ring-0 dark:bg-transparent"
+          />
+          <Button
+            type="submit"
+            size="icon"
+            className="size-9 shrink-0 rounded-xl"
+            disabled={!body.trim() || createComment.isPending}
+          >
+            {createComment.isPending ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <Send className="size-4" />
+            )}
+            <span className="sr-only">Send comment</span>
+          </Button>
+        </div>
       </form>
     </div>
   )
