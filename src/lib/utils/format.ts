@@ -1,4 +1,4 @@
-import { format, formatDistanceToNow } from "date-fns"
+import { differenceInCalendarDays, format, formatDistanceToNow } from "date-fns"
 
 /** The backend emits naive timestamps in UTC (e.g. "2026-07-11T16:33:22")
  * with no timezone designator. `new Date()` would parse those as *local*
@@ -22,6 +22,18 @@ export function formatDateTime(value: string | Date): string {
 
 export function formatRelative(value: string | Date): string {
   return formatDistanceToNow(parseApiDate(value), { addSuffix: true })
+}
+
+/** Human due-date phrasing at day granularity, e.g. "due today",
+ * "due in 2 days", "3 days overdue". `overdue` is true once the day has
+ * passed, for styling. */
+export function formatDueDistance(value: string | Date): { label: string; overdue: boolean } {
+  const days = differenceInCalendarDays(parseApiDate(value), new Date())
+  if (days === 0) return { label: "due today", overdue: false }
+  if (days === 1) return { label: "due tomorrow", overdue: false }
+  if (days > 1) return { label: `due in ${days} days`, overdue: false }
+  if (days === -1) return { label: "1 day overdue", overdue: true }
+  return { label: `${Math.abs(days)} days overdue`, overdue: true }
 }
 
 export function initials(name: string): string {

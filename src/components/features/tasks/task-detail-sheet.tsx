@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Loader2 } from "lucide-react"
+import { ChevronRight, Loader2 } from "lucide-react"
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
@@ -25,8 +25,12 @@ import {
 } from "@/components/ui/sheet"
 import { Textarea } from "@/components/ui/textarea"
 import { TaskComments } from "@/components/features/tasks/task-comments"
+import { STATUS_LABEL } from "@/components/features/tasks/task-status-badge"
 import { ApiError } from "@/lib/api/client"
+import { cn } from "@/lib/utils"
+import { formatDueDistance } from "@/lib/utils/format"
 import { useUpdatePersonalTask, useUpdateWorkspaceTask } from "@/hooks/queries/use-tasks"
+import { useWorkspaces } from "@/hooks/queries/use-workspaces"
 import type {
   Task,
   TaskConflict,
@@ -78,6 +82,12 @@ export function TaskDetailSheet({ task, trigger, workspaceId, members = [] }: Ta
   const updatePersonalTask = useUpdatePersonalTask()
   const updateWorkspaceTask = useUpdateWorkspaceTask(workspaceId ?? -1)
 
+  const { data: workspaces } = useWorkspaces()
+  const workspaceName =
+    workspaceId !== undefined
+      ? workspaces?.find((w) => w.id === workspaceId)?.name
+      : undefined
+
   useEffect(() => {
     if (open) {
       setCurrentTask(task)
@@ -102,6 +112,8 @@ export function TaskDetailSheet({ task, trigger, workspaceId, members = [] }: Ta
 
   const isSaving =
     workspaceId !== undefined ? updateWorkspaceTask.isPending : updatePersonalTask.isPending
+
+  const dueHint = dueDate ? formatDueDistance(dueDate) : null
 
   function applyServerTask(fresh: Task) {
     setCurrentTask(fresh)
@@ -155,8 +167,13 @@ export function TaskDetailSheet({ task, trigger, workspaceId, members = [] }: Ta
       <SheetTrigger asChild>{trigger}</SheetTrigger>
       <SheetContent className="overflow-y-auto sm:max-w-md">
         <SheetHeader>
-          <SheetTitle>Task details</SheetTitle>
-          <SheetDescription>View and edit this task.</SheetDescription>
+          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+            <span className="truncate">{workspaceName ?? "My Tasks"}</span>
+            <ChevronRight className="size-3 shrink-0" />
+            <span className="shrink-0">{STATUS_LABEL[currentTask.status]}</span>
+          </div>
+          <SheetTitle className="sr-only">Task details</SheetTitle>
+          <SheetDescription className="sr-only">View and edit this task.</SheetDescription>
         </SheetHeader>
 
         <div className="flex flex-col gap-4 px-4 pb-4">
@@ -224,6 +241,11 @@ export function TaskDetailSheet({ task, trigger, workspaceId, members = [] }: Ta
               value={dueDate}
               onChange={(event) => setDueDate(event.target.value)}
             />
+            {dueHint ? (
+              <p className={cn("text-xs", dueHint.overdue ? "text-destructive" : "text-muted-foreground")}>
+                {dueHint.label}
+              </p>
+            ) : null}
           </div>
 
           {workspaceId !== undefined ? (

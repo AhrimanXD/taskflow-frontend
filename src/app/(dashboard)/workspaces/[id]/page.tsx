@@ -114,7 +114,12 @@ export default function WorkspaceDetailPage() {
           <WorkspaceTasksTab workspaceId={workspaceId} members={members ?? []} />
         </TabsContent>
         <TabsContent value="members" className="mt-4">
-          <WorkspaceMembersTab members={members ?? []} isLoading={isMembersLoading} />
+          <WorkspaceMembersTab
+            members={members ?? []}
+            isLoading={isMembersLoading}
+            workspaceId={workspaceId}
+            canManage={canManage}
+          />
         </TabsContent>
         <TabsContent value="activity" className="mt-4">
           <WorkspaceActivityTab workspaceId={workspaceId} />
