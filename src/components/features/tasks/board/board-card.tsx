@@ -17,7 +17,7 @@ import { TaskDetailSheet } from "@/components/features/tasks/task-detail-sheet"
 import { TaskPriorityBadge } from "@/components/features/tasks/task-priority-badge"
 import { useDeletePersonalTask, useDeleteWorkspaceTask } from "@/hooks/queries/use-tasks"
 import { cn } from "@/lib/utils"
-import { formatDate, initials } from "@/lib/utils/format"
+import { formatDate, initials, parseApiDate } from "@/lib/utils/format"
 import type { Task, WorkspaceMember } from "@/types/api"
 
 interface BoardCardProps {
@@ -42,7 +42,7 @@ export function BoardCard({ task, workspaceId, members = [], overlay = false }: 
       : undefined
 
   const isOverdue =
-    !!task.due_date && new Date(task.due_date) < new Date() && task.status !== "completed"
+    !!task.due_date && parseApiDate(task.due_date) < new Date() && task.status !== "completed"
 
   const style = overlay
     ? undefined

@@ -20,7 +20,7 @@ import {
   useDeletePersonalTask,
   useDeleteWorkspaceTask,
 } from "@/hooks/queries/use-tasks"
-import { formatDate, initials } from "@/lib/utils/format"
+import { formatDate, initials, parseApiDate } from "@/lib/utils/format"
 import { cn } from "@/lib/utils"
 import type { Task, WorkspaceMember, WorkspaceRole } from "@/types/api"
 
@@ -108,7 +108,7 @@ export function useTaskColumns({
     cell: ({ row }) => {
       const dueDate = row.original.due_date
       if (!dueDate) return <span className="text-muted-foreground">—</span>
-      const isOverdue = new Date(dueDate) < new Date() && row.original.status !== "completed"
+      const isOverdue = parseApiDate(dueDate) < new Date() && row.original.status !== "completed"
       return (
         <span className={cn(isOverdue && "font-medium text-destructive")}>
           {formatDate(dueDate)}
