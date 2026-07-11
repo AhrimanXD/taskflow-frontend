@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { DataTableColumnHeader } from "@/components/common/data-table/data-table-column-header"
 import { ConfirmDialog } from "@/components/common/confirm-dialog"
-import { TaskDetailSheet } from "@/components/features/tasks/task-detail-sheet"
+import { TaskDetailModal } from "@/components/features/tasks/task-detail-modal"
 import { TaskStatusBadge } from "@/components/features/tasks/task-status-badge"
 import { TaskPriorityBadge } from "@/components/features/tasks/task-priority-badge"
 import {
@@ -49,7 +49,7 @@ export function useTaskColumns({
       accessorKey: "title",
       header: ({ column }) => <DataTableColumnHeader column={column} title="Title" />,
       cell: ({ row }) => (
-        <TaskDetailSheet
+        <TaskDetailModal
           task={row.original}
           workspaceId={workspaceId}
           members={members}
@@ -138,7 +138,7 @@ export function useTaskColumns({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <TaskDetailSheet
+            <TaskDetailModal
               task={task}
               workspaceId={workspaceId}
               members={members}

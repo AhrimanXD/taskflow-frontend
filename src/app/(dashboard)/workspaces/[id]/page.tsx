@@ -15,7 +15,7 @@ import { WorkspaceFormDialog } from "@/components/features/workspaces/workspace-
 import { WorkspaceMembersTab } from "@/components/features/workspaces/workspace-members-tab"
 import { WorkspaceTasksTab } from "@/components/features/tasks/workspace-tasks-tab"
 import { WorkspaceInvitationsTab } from "@/components/features/invitations/workspace-invitations-tab"
-import { WorkspaceActivityTab } from "@/components/features/workspaces/workspace-activity-tab"
+import { WorkspaceActivityDrawer } from "@/components/features/workspaces/workspace-activity-drawer"
 import {
   useDeleteWorkspace,
   useWorkspace,
@@ -70,36 +70,39 @@ export default function WorkspaceDetailPage() {
         title={workspace.name}
         description={workspace.description || undefined}
         action={
-          isOwner ? (
-            <div className="flex items-center gap-2">
-              <WorkspaceFormDialog
-                mode="edit"
-                workspace={workspace}
-                trigger={
-                  <Button variant="outline" size="sm">
-                    <Pencil className="size-4" />
-                    Edit
-                  </Button>
-                }
-              />
-              <ConfirmDialog
-                trigger={
-                  <Button variant="outline" size="sm">
-                    <Trash2 className="size-4" />
-                    Delete
-                  </Button>
-                }
-                title="Delete workspace"
-                description={`This will permanently delete "${workspace.name}" and all of its tasks. This can't be undone.`}
-                confirmLabel="Delete"
-                destructive
-                onConfirm={async () => {
-                  await deleteWorkspace.mutateAsync(workspace.id)
-                  router.push("/tasks")
-                }}
-              />
-            </div>
-          ) : undefined
+          <div className="flex items-center gap-2">
+            <WorkspaceActivityDrawer workspaceId={workspaceId} />
+            {isOwner ? (
+              <>
+                <WorkspaceFormDialog
+                  mode="edit"
+                  workspace={workspace}
+                  trigger={
+                    <Button variant="outline" size="sm">
+                      <Pencil className="size-4" />
+                      Edit
+                    </Button>
+                  }
+                />
+                <ConfirmDialog
+                  trigger={
+                    <Button variant="outline" size="sm">
+                      <Trash2 className="size-4" />
+                      Delete
+                    </Button>
+                  }
+                  title="Delete workspace"
+                  description={`This will permanently delete "${workspace.name}" and all of its tasks. This can't be undone.`}
+                  confirmLabel="Delete"
+                  destructive
+                  onConfirm={async () => {
+                    await deleteWorkspace.mutateAsync(workspace.id)
+                    router.push("/tasks")
+                  }}
+                />
+              </>
+            ) : null}
+          </div>
         }
       />
 
@@ -107,7 +110,6 @@ export default function WorkspaceDetailPage() {
         <TabsList>
           <TabsTrigger value="tasks">Tasks</TabsTrigger>
           <TabsTrigger value="members">Members</TabsTrigger>
-          <TabsTrigger value="activity">Activity</TabsTrigger>
           {canManage ? <TabsTrigger value="invitations">Invitations</TabsTrigger> : null}
         </TabsList>
         <TabsContent value="tasks" className="mt-4">
@@ -122,9 +124,6 @@ export default function WorkspaceDetailPage() {
             isOwner={isOwner}
             currentUserId={user?.id}
           />
-        </TabsContent>
-        <TabsContent value="activity" className="mt-4">
-          <WorkspaceActivityTab workspaceId={workspaceId} />
         </TabsContent>
         {canManage ? (
           <TabsContent value="invitations" className="mt-4">

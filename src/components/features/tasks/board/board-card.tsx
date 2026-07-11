@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { ConfirmDialog } from "@/components/common/confirm-dialog"
-import { TaskDetailSheet } from "@/components/features/tasks/task-detail-sheet"
+import { TaskDetailModal } from "@/components/features/tasks/task-detail-modal"
 import { TaskPriorityBadge } from "@/components/features/tasks/task-priority-badge"
 import { useDeletePersonalTask, useDeleteWorkspaceTask } from "@/hooks/queries/use-tasks"
 import { cn } from "@/lib/utils"
@@ -68,7 +68,7 @@ export function BoardCard({ task, workspaceId, members = [], overlay = false }: 
             <TaskPriorityBadge priority={task.priority} />
           </div>
         ) : (
-          <TaskDetailSheet
+          <TaskDetailModal
             task={task}
             workspaceId={workspaceId}
             members={members}
@@ -97,7 +97,7 @@ export function BoardCard({ task, workspaceId, members = [], overlay = false }: 
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <TaskDetailSheet
+              <TaskDetailModal
                 task={task}
                 workspaceId={workspaceId}
                 members={members}
