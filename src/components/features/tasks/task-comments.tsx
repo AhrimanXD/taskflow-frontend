@@ -18,8 +18,8 @@ import type { WorkspaceMember } from "@/types/api"
 const ACTIVE_MENTION_RE = /(?:^|\s)@(\w*)$/
 
 interface TaskCommentsProps {
-  workspaceId: number
-  taskId: number
+  workspaceId: string
+  taskId: string
   members: WorkspaceMember[]
 }
 

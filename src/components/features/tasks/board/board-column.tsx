@@ -14,7 +14,7 @@ import type { Task, TaskStatus, WorkspaceMember } from "@/types/api"
 interface BoardColumnProps {
   status: TaskStatus
   tasks: Task[]
-  workspaceId?: number
+  workspaceId?: string
   members: WorkspaceMember[]
 }
 

@@ -8,27 +8,27 @@ export const personalTasksApi = {
 
   create: (payload: TaskCreatePayload) => api.post<Task>("/api/tasks", payload),
 
-  get: (id: number) => api.get<Task>(`/api/tasks/${id}`),
+  get: (id: string) => api.get<Task>(`/api/tasks/${id}`),
 
-  update: (id: number, payload: TaskUpdatePayload) =>
+  update: (id: string, payload: TaskUpdatePayload) =>
     api.patch<Task>(`/api/tasks/${id}`, payload),
 
-  remove: (id: number) => api.delete<void>(`/api/tasks/${id}`),
+  remove: (id: string) => api.delete<void>(`/api/tasks/${id}`),
 }
 
 export const workspaceTasksApi = {
-  list: (workspaceId: number, params: ListParams = {}) =>
+  list: (workspaceId: string, params: ListParams = {}) =>
     api.get<Task[]>(`/api/workspaces/${workspaceId}/tasks${buildQuery(params)}`),
 
-  create: (workspaceId: number, payload: TaskCreatePayload) =>
+  create: (workspaceId: string, payload: TaskCreatePayload) =>
     api.post<Task>(`/api/workspaces/${workspaceId}/tasks`, payload),
 
-  get: (workspaceId: number, taskId: number) =>
+  get: (workspaceId: string, taskId: string) =>
     api.get<Task>(`/api/workspaces/${workspaceId}/tasks/${taskId}`),
 
-  update: (workspaceId: number, taskId: number, payload: TaskUpdatePayload) =>
+  update: (workspaceId: string, taskId: string, payload: TaskUpdatePayload) =>
     api.patch<Task>(`/api/workspaces/${workspaceId}/tasks/${taskId}`, payload),
 
-  remove: (workspaceId: number, taskId: number) =>
+  remove: (workspaceId: string, taskId: string) =>
     api.delete<void>(`/api/workspaces/${workspaceId}/tasks/${taskId}`),
 }

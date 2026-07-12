@@ -8,7 +8,7 @@ export const notificationsApi = {
 
   unreadCount: () => api.get<{ count: number }>("/api/notifications/unread-count"),
 
-  markRead: (id: number) => api.post<void>(`/api/notifications/${id}/read`),
+  markRead: (id: string) => api.post<void>(`/api/notifications/${id}/read`),
 
   markAllRead: () => api.post<void>("/api/notifications/read-all"),
 }

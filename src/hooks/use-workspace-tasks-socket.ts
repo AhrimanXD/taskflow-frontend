@@ -15,7 +15,7 @@ const MAX_RECONNECT_DELAY_MS = 15000
  * query caches in place as events arrive, so every connected client sees
  * changes made by teammates without polling. Reconnects with exponential
  * backoff on an unexpected close; gives up if the server rejects auth. */
-export function useWorkspaceTasksSocket(workspaceId: number | undefined) {
+export function useWorkspaceTasksSocket(workspaceId: string | undefined) {
   const queryClient = useQueryClient()
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export function useWorkspaceTasksSocket(workspaceId: number | undefined) {
 
     function upsertTask(task: Task) {
       queryClient.setQueriesData<Task[]>(
-        { queryKey: queryKeys.workspaceTasks.all(workspaceId as number) },
+        { queryKey: queryKeys.workspaceTasks.all(workspaceId as string) },
         (old) => {
           if (!old) return old
           const exists = old.some((t) => t.id === task.id)
@@ -38,16 +38,16 @@ export function useWorkspaceTasksSocket(workspaceId: number | undefined) {
       )
     }
 
-    function removeTask(taskId: number) {
+    function removeTask(taskId: string) {
       queryClient.setQueriesData<Task[]>(
-        { queryKey: queryKeys.workspaceTasks.all(workspaceId as number) },
+        { queryKey: queryKeys.workspaceTasks.all(workspaceId as string) },
         (old) => old?.filter((t) => t.id !== taskId)
       )
     }
 
-    function upsertComment(taskId: number, comment: Comment) {
+    function upsertComment(taskId: string, comment: Comment) {
       queryClient.setQueriesData<Comment[]>(
-        { queryKey: queryKeys.comments.all(workspaceId as number, taskId) },
+        { queryKey: queryKeys.comments.all(workspaceId as string, taskId) },
         (old) => {
           if (!old) return old
           const exists = old.some((c) => c.id === comment.id)
@@ -56,16 +56,16 @@ export function useWorkspaceTasksSocket(workspaceId: number | undefined) {
       )
     }
 
-    function removeComment(taskId: number, commentId: number) {
+    function removeComment(taskId: string, commentId: string) {
       queryClient.setQueriesData<Comment[]>(
-        { queryKey: queryKeys.comments.all(workspaceId as number, taskId) },
+        { queryKey: queryKeys.comments.all(workspaceId as string, taskId) },
         (old) => old?.filter((c) => c.id !== commentId)
       )
     }
 
     function prependActivity(activity: Activity) {
       queryClient.setQueriesData<Activity[]>(
-        { queryKey: queryKeys.activity.all(workspaceId as number) },
+        { queryKey: queryKeys.activity.all(workspaceId as string) },
         (old) => {
           if (!old) return old
           if (old.some((a) => a.id === activity.id)) return old

@@ -17,15 +17,15 @@ export function useMyInvitations(status?: InvitationStatus) {
   })
 }
 
-export function useWorkspaceInvitations(workspaceId: number | undefined, status?: InvitationStatus) {
+export function useWorkspaceInvitations(workspaceId: string | undefined, status?: InvitationStatus) {
   return useQuery({
-    queryKey: queryKeys.invitations.workspace(workspaceId ?? -1, status),
-    queryFn: () => invitationsApi.listForWorkspace(workspaceId as number, status),
+    queryKey: queryKeys.invitations.workspace(workspaceId ?? "", status),
+    queryFn: () => invitationsApi.listForWorkspace(workspaceId as string, status),
     enabled: workspaceId !== undefined,
   })
 }
 
-export function useCreateInvitation(workspaceId: number) {
+export function useCreateInvitation(workspaceId: string) {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (payload: InvitationCreatePayload) =>
@@ -38,10 +38,10 @@ export function useCreateInvitation(workspaceId: number) {
   })
 }
 
-export function useRevokeInvitation(workspaceId: number) {
+export function useRevokeInvitation(workspaceId: string) {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (inviteId: number) => invitationsApi.revoke(inviteId),
+    mutationFn: (inviteId: string) => invitationsApi.revoke(inviteId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["invitations", "workspace", workspaceId] })
       toast.success("Invitation revoked")
@@ -53,7 +53,7 @@ export function useRevokeInvitation(workspaceId: number) {
 export function useAcceptInvitation() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (inviteId: number) => invitationsApi.accept(inviteId),
+    mutationFn: (inviteId: string) => invitationsApi.accept(inviteId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["invitations", "mine"] })
       queryClient.invalidateQueries({ queryKey: queryKeys.workspaces.all() })
@@ -66,7 +66,7 @@ export function useAcceptInvitation() {
 export function useDeclineInvitation() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (inviteId: number) => invitationsApi.decline(inviteId),
+    mutationFn: (inviteId: string) => invitationsApi.decline(inviteId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["invitations", "mine"] })
       toast.success("Invitation declined")

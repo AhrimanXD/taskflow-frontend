@@ -10,15 +10,15 @@ function errorMessage(error: unknown, fallback: string) {
   return error instanceof ApiError ? error.message : fallback
 }
 
-export function useTaskComments(workspaceId: number | undefined, taskId: number | undefined) {
+export function useTaskComments(workspaceId: string | undefined, taskId: string | undefined) {
   return useQuery({
-    queryKey: queryKeys.comments.list(workspaceId ?? -1, taskId ?? -1),
-    queryFn: () => commentsApi.list(workspaceId as number, taskId as number),
+    queryKey: queryKeys.comments.list(workspaceId ?? "", taskId ?? ""),
+    queryFn: () => commentsApi.list(workspaceId as string, taskId as string),
     enabled: workspaceId !== undefined && taskId !== undefined,
   })
 }
 
-export function useCreateComment(workspaceId: number, taskId: number) {
+export function useCreateComment(workspaceId: string, taskId: string) {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (payload: CommentCreatePayload) =>
@@ -30,10 +30,10 @@ export function useCreateComment(workspaceId: number, taskId: number) {
   })
 }
 
-export function useDeleteComment(workspaceId: number, taskId: number) {
+export function useDeleteComment(workspaceId: string, taskId: string) {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (commentId: number) => commentsApi.remove(workspaceId, taskId, commentId),
+    mutationFn: (commentId: string) => commentsApi.remove(workspaceId, taskId, commentId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.comments.all(workspaceId, taskId) })
     },

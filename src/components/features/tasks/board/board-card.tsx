@@ -22,7 +22,7 @@ import type { Task, WorkspaceMember } from "@/types/api"
 
 interface BoardCardProps {
   task: Task
-  workspaceId?: number
+  workspaceId?: string
   members?: WorkspaceMember[]
   /** True for the floating copy rendered in DragOverlay — no drag listeners, no interactive controls. */
   overlay?: boolean
@@ -34,7 +34,7 @@ export function BoardCard({ task, workspaceId, members = [], overlay = false }: 
     disabled: overlay,
   })
   const deletePersonalTask = useDeletePersonalTask()
-  const deleteWorkspaceTask = useDeleteWorkspaceTask(workspaceId ?? -1)
+  const deleteWorkspaceTask = useDeleteWorkspaceTask(workspaceId ?? "")
 
   const assignee =
     workspaceId !== undefined && task.assignee_id

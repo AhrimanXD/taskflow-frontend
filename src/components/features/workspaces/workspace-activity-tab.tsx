@@ -11,7 +11,7 @@ import { useWorkspaceActivity } from "@/hooks/queries/use-activity"
 
 const PAGE_SIZE = 20
 
-export function WorkspaceActivityTab({ workspaceId }: { workspaceId: number }) {
+export function WorkspaceActivityTab({ workspaceId }: { workspaceId: string }) {
   const [limit, setLimit] = useState(PAGE_SIZE)
   const { data: activity, isLoading, isFetching } = useWorkspaceActivity(workspaceId, { limit })
 

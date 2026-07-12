@@ -3,6 +3,6 @@ import { buildQuery } from "@/lib/api/query-string"
 import type { Activity, ListParams } from "@/types/api"
 
 export const activityApi = {
-  list: (workspaceId: number, params: ListParams = {}) =>
+  list: (workspaceId: string, params: ListParams = {}) =>
     api.get<Activity[]>(`/api/workspaces/${workspaceId}/activity${buildQuery(params)}`),
 }
