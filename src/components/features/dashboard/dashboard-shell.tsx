@@ -6,9 +6,7 @@ import { Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { SidebarNav } from "@/components/features/dashboard/sidebar-nav"
-import { UserMenu } from "@/components/features/dashboard/user-menu"
 import { NotificationBell } from "@/components/features/notifications/notification-bell"
-import { ThemeToggle } from "@/components/common/theme-toggle"
 import { useNotificationsSocket } from "@/hooks/use-notifications-socket"
 import { useAuth } from "@/lib/auth/auth-provider"
 
@@ -40,8 +38,6 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
 
           <div className="ml-auto flex items-center gap-2">
             <NotificationBell />
-            <ThemeToggle />
-            <UserMenu />
           </div>
         </header>
         <main className="flex-1 overflow-y-auto p-4 md:p-6">{children}</main>

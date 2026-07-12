@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { WorkspaceFormDialog } from "@/components/features/workspaces/workspace-form-dialog"
 import { WorkspaceNavMenu } from "@/components/features/workspaces/workspace-nav-menu"
+import { SidebarUserMenu } from "@/components/features/dashboard/sidebar-user-menu"
 import { useWorkspaces } from "@/hooks/queries/use-workspaces"
 import { useAuth } from "@/lib/auth/auth-provider"
 import { cn } from "@/lib/utils"
@@ -103,6 +104,10 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
             <p className="px-3 py-1 text-xs text-muted-foreground">No workspaces yet</p>
           )}
         </div>
+      </div>
+
+      <div className="border-t pt-2">
+        <SidebarUserMenu onNavigate={onNavigate} />
       </div>
     </div>
   )
