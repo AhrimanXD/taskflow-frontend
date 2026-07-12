@@ -7,35 +7,35 @@ export const queryKeys = {
   workspaces: {
     all: () => ["workspaces"] as const,
     list: (params: ListParams) => ["workspaces", "list", params] as const,
-    detail: (id: number) => ["workspaces", "detail", id] as const,
-    members: (id: number) => ["workspaces", "detail", id, "members"] as const,
+    detail: (id: string) => ["workspaces", "detail", id] as const,
+    members: (id: string) => ["workspaces", "detail", id, "members"] as const,
   },
   personalTasks: {
     all: () => ["tasks", "personal"] as const,
     list: (params: ListParams) => ["tasks", "personal", "list", params] as const,
-    detail: (id: number) => ["tasks", "personal", "detail", id] as const,
+    detail: (id: string) => ["tasks", "personal", "detail", id] as const,
   },
   workspaceTasks: {
-    all: (workspaceId: number) => ["tasks", "workspace", workspaceId] as const,
-    list: (workspaceId: number, params: ListParams) =>
+    all: (workspaceId: string) => ["tasks", "workspace", workspaceId] as const,
+    list: (workspaceId: string, params: ListParams) =>
       ["tasks", "workspace", workspaceId, "list", params] as const,
-    detail: (workspaceId: number, taskId: number) =>
+    detail: (workspaceId: string, taskId: string) =>
       ["tasks", "workspace", workspaceId, "detail", taskId] as const,
   },
   invitations: {
     mine: (status?: InvitationStatus) => ["invitations", "mine", status] as const,
-    workspace: (workspaceId: number, status?: InvitationStatus) =>
+    workspace: (workspaceId: string, status?: InvitationStatus) =>
       ["invitations", "workspace", workspaceId, status] as const,
   },
   comments: {
-    all: (workspaceId: number, taskId: number) =>
+    all: (workspaceId: string, taskId: string) =>
       ["comments", workspaceId, taskId] as const,
-    list: (workspaceId: number, taskId: number) =>
+    list: (workspaceId: string, taskId: string) =>
       ["comments", workspaceId, taskId, "list"] as const,
   },
   activity: {
-    all: (workspaceId: number) => ["activity", workspaceId] as const,
-    list: (workspaceId: number, params: ListParams) =>
+    all: (workspaceId: string) => ["activity", workspaceId] as const,
+    list: (workspaceId: string, params: ListParams) =>
       ["activity", workspaceId, "list", params] as const,
   },
   stats: {

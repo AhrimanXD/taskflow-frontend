@@ -54,7 +54,7 @@ interface TaskFormDialogProps {
   mode: "create"
   trigger: React.ReactNode
   /** Present only for workspace tasks; enables the assignee field. */
-  workspaceId?: number
+  workspaceId?: string
   members?: WorkspaceMember[]
   /** Pre-selects status on create — used by the board view's per-column "+". */
   defaultStatus?: TaskStatus
@@ -71,7 +71,7 @@ export function TaskFormDialog({
   const [open, setOpen] = useState(false)
 
   const createPersonalTask = useCreatePersonalTask()
-  const createWorkspaceTask = useCreateWorkspaceTask(workspaceId ?? -1)
+  const createWorkspaceTask = useCreateWorkspaceTask(workspaceId ?? "")
 
   const form = useForm<TaskFormValues>({
     resolver: zodResolver(taskSchema),
@@ -109,7 +109,7 @@ export function TaskFormDialog({
         ? {
             assignee_id:
               values.assignee_id && values.assignee_id !== UNASSIGNED
-                ? Number(values.assignee_id)
+                ? values.assignee_id
                 : null,
           }
         : {}),

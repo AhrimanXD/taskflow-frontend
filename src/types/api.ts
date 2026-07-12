@@ -1,6 +1,10 @@
 // Mirrors backend/app/schemas/* and backend/app/models/* enums exactly.
 // Keep in sync when the backend adds fields — this is the single source of
 // truth for shapes flowing through the API client and react-query cache.
+//
+// IDs and foreign keys are UUIDv7 strings (backend switched off integer
+// auto-increment). The only numeric identifier-ish field is Task.version, the
+// optimistic-concurrency guard.
 
 export type TaskStatus = "pending" | "ongoing" | "completed"
 
@@ -13,14 +17,14 @@ export type InviteRole = "admin" | "member"
 export type InvitationStatus = "pending" | "accepted" | "declined" | "revoked"
 
 export interface User {
-  id: number
+  id: string
   email: string
   username: string
   created_at: string
 }
 
 export interface UserPublic {
-  id: number
+  id: string
   username: string
 }
 
@@ -30,28 +34,28 @@ export interface Token {
 }
 
 export interface Workspace {
-  id: number
+  id: string
   name: string
   description: string | null
-  owner_id: number
+  owner_id: string
   created_at: string
 }
 
 export interface WorkspaceMember {
-  user_id: number
+  user_id: string
   role: WorkspaceRole
   user: UserPublic
 }
 
 export interface Task {
-  id: number
+  id: string
   title: string
   description: string | null
   status: TaskStatus
   priority: TaskPriority
-  owner_id: number
-  assignee_id: number | null
-  workspace_id: number | null
+  owner_id: string
+  assignee_id: string | null
+  workspace_id: string | null
   due_date: string | null
   version: number
   created_at: string
@@ -59,21 +63,21 @@ export interface Task {
 }
 
 export interface Comment {
-  id: number
-  task_id: number
-  author_id: number
+  id: string
+  task_id: string
+  author_id: string
   body: string
   created_at: string
   author: UserPublic
 }
 
 export interface Activity {
-  id: number
-  workspace_id: number
-  actor_id: number
+  id: string
+  workspace_id: string
+  actor_id: string
   action: string
   object_type: string
-  object_id: number | null
+  object_id: string | null
   summary: string
   created_at: string
   actor: UserPublic
@@ -90,7 +94,7 @@ export interface StatsOverview {
 }
 
 export interface Invitation {
-  id: number
+  id: string
   role: InviteRole
   status: InvitationStatus
   created_at: string
@@ -134,7 +138,7 @@ export interface TaskCreatePayload {
   description?: string | null
   status?: TaskStatus
   priority?: TaskPriority
-  assignee_id?: number | null
+  assignee_id?: string | null
   due_date?: string | null
 }
 
@@ -143,7 +147,7 @@ export interface TaskUpdatePayload {
   description?: string | null
   status?: TaskStatus
   priority?: TaskPriority
-  assignee_id?: number | null
+  assignee_id?: string | null
   due_date?: string | null
   /** Required by the workspace task update route for optimistic concurrency
    * control; ignored by the personal task tree. */
@@ -173,17 +177,17 @@ export interface ListParams {
 // --- Realtime (WS /ws/workspaces/{workspace_id}) ---
 
 export type TaskWsEvent =
-  | { type: "task.created"; workspace_id: number; task: Task }
-  | { type: "task.updated"; workspace_id: number; task: Task }
-  | { type: "task.deleted"; workspace_id: number; task: { id: number } }
+  | { type: "task.created"; workspace_id: string; task: Task }
+  | { type: "task.updated"; workspace_id: string; task: Task }
+  | { type: "task.deleted"; workspace_id: string; task: { id: string } }
 
 export type CommentWsEvent =
-  | { type: "comment.created"; workspace_id: number; task_id: number; comment: Comment }
-  | { type: "comment.deleted"; workspace_id: number; task_id: number; comment: { id: number } }
+  | { type: "comment.created"; workspace_id: string; task_id: string; comment: Comment }
+  | { type: "comment.deleted"; workspace_id: string; task_id: string; comment: { id: string } }
 
 export type ActivityWsEvent = {
   type: "activity.created"
-  workspace_id: number
+  workspace_id: string
   activity: Activity
 }
 
@@ -204,10 +208,10 @@ export interface ChangePasswordPayload {
 }
 
 export interface Notification {
-  id: number
+  id: string
   type: string
   message: string
-  workspace_id: number | null
+  workspace_id: string | null
   is_read: boolean
   created_at: string
   actor: UserPublic | null

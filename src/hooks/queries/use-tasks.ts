@@ -34,7 +34,7 @@ export function useCreatePersonalTask() {
 export function useUpdatePersonalTask() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, payload }: { id: number; payload: TaskUpdatePayload }) =>
+    mutationFn: ({ id, payload }: { id: string; payload: TaskUpdatePayload }) =>
       personalTasksApi.update(id, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.personalTasks.all() })
@@ -47,7 +47,7 @@ export function useUpdatePersonalTask() {
 export function useDeletePersonalTask() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (id: number) => personalTasksApi.remove(id),
+    mutationFn: (id: string) => personalTasksApi.remove(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.personalTasks.all() })
       toast.success("Task deleted")
@@ -62,15 +62,15 @@ export function useDeletePersonalTask() {
 // These mutation hooks still invalidate directly so the initiating client
 // doesn't wait on its own broadcast round-trip.
 
-export function useWorkspaceTasks(workspaceId: number | undefined, params: ListParams = {}) {
+export function useWorkspaceTasks(workspaceId: string | undefined, params: ListParams = {}) {
   return useQuery({
-    queryKey: queryKeys.workspaceTasks.list(workspaceId ?? -1, params),
-    queryFn: () => workspaceTasksApi.list(workspaceId as number, params),
+    queryKey: queryKeys.workspaceTasks.list(workspaceId ?? "", params),
+    queryFn: () => workspaceTasksApi.list(workspaceId as string, params),
     enabled: workspaceId !== undefined,
   })
 }
 
-export function useCreateWorkspaceTask(workspaceId: number) {
+export function useCreateWorkspaceTask(workspaceId: string) {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (payload: TaskCreatePayload) =>
@@ -83,10 +83,10 @@ export function useCreateWorkspaceTask(workspaceId: number) {
   })
 }
 
-export function useUpdateWorkspaceTask(workspaceId: number) {
+export function useUpdateWorkspaceTask(workspaceId: string) {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ taskId, payload }: { taskId: number; payload: TaskUpdatePayload }) =>
+    mutationFn: ({ taskId, payload }: { taskId: string; payload: TaskUpdatePayload }) =>
       workspaceTasksApi.update(workspaceId, taskId, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.workspaceTasks.all(workspaceId) })
@@ -101,10 +101,10 @@ export function useUpdateWorkspaceTask(workspaceId: number) {
   })
 }
 
-export function useDeleteWorkspaceTask(workspaceId: number) {
+export function useDeleteWorkspaceTask(workspaceId: string) {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (taskId: number) => workspaceTasksApi.remove(workspaceId, taskId),
+    mutationFn: (taskId: string) => workspaceTasksApi.remove(workspaceId, taskId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.workspaceTasks.all(workspaceId) })
       toast.success("Task deleted")

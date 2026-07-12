@@ -16,7 +16,7 @@ import { formatDate, initials } from "@/lib/utils/format"
 import type { InvitationForWorkspace } from "@/types/api"
 
 interface WorkspaceInvitationsTabProps {
-  workspaceId: number
+  workspaceId: string
 }
 
 export function WorkspaceInvitationsTab({ workspaceId }: WorkspaceInvitationsTabProps) {

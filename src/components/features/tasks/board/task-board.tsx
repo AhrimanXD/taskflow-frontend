@@ -40,18 +40,18 @@ function isColumnId(id: string | number): id is TaskStatus {
 
 interface TaskBoardProps {
   tasks: Task[]
-  workspaceId?: number
+  workspaceId?: string
   members?: WorkspaceMember[]
 }
 
 export function TaskBoard({ tasks, workspaceId, members = [] }: TaskBoardProps) {
   const [columns, setColumns] = useState<ColumnsState>(() => groupByStatus(tasks))
-  const [activeId, setActiveId] = useState<number | null>(null)
+  const [activeId, setActiveId] = useState<string | null>(null)
   const [activeTask, setActiveTask] = useState<Task | null>(null)
 
   const queryClient = useQueryClient()
   const updatePersonalTask = useUpdatePersonalTask()
-  const updateWorkspaceTask = useUpdateWorkspaceTask(workspaceId ?? -1)
+  const updateWorkspaceTask = useUpdateWorkspaceTask(workspaceId ?? "")
 
   // Re-sync from the server-backed `tasks` prop whenever it changes (fresh
   // fetch, or a teammate's websocket update) — but never mid-drag, or the
@@ -67,12 +67,12 @@ export function TaskBoard({ tasks, workspaceId, members = [] }: TaskBoardProps) 
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   )
 
-  function findColumnOfTask(taskId: number): TaskStatus | undefined {
+  function findColumnOfTask(taskId: string): TaskStatus | undefined {
     return STATUSES.find((status) => columns[status].some((t) => t.id === taskId))
   }
 
   function handleDragStart(event: DragStartEvent) {
-    const id = Number(event.active.id)
+    const id = String(event.active.id)
     setActiveId(id)
     const status = findColumnOfTask(id)
     setActiveTask(status ? (columns[status].find((t) => t.id === id) ?? null) : null)
@@ -82,9 +82,9 @@ export function TaskBoard({ tasks, workspaceId, members = [] }: TaskBoardProps) 
     const { active, over } = event
     if (!over) return
 
-    const activeTaskId = Number(active.id)
+    const activeTaskId = String(active.id)
     const activeStatus = findColumnOfTask(activeTaskId)
-    const overStatus = isColumnId(over.id) ? over.id : findColumnOfTask(Number(over.id))
+    const overStatus = isColumnId(over.id) ? over.id : findColumnOfTask(String(over.id))
 
     if (!activeStatus || !overStatus || activeStatus === overStatus) return
 
@@ -99,7 +99,7 @@ export function TaskBoard({ tasks, workspaceId, members = [] }: TaskBoardProps) 
 
       let insertIndex = targetItems.length
       if (!isColumnId(over.id)) {
-        const overIndex = targetItems.findIndex((t) => t.id === Number(over.id))
+        const overIndex = targetItems.findIndex((t) => t.id === String(over.id))
         if (overIndex !== -1) insertIndex = overIndex
       }
       const newTargetItems = [...targetItems]
@@ -110,7 +110,7 @@ export function TaskBoard({ tasks, workspaceId, members = [] }: TaskBoardProps) 
   }
 
   async function handleDragEnd(event: DragEndEvent) {
-    const id = Number(event.active.id)
+    const id = String(event.active.id)
     setActiveId(null)
     setActiveTask(null)
 

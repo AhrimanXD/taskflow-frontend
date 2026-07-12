@@ -27,9 +27,9 @@ import type { Task, WorkspaceMember, WorkspaceRole } from "@/types/api"
 interface UseTaskColumnsOptions {
   /** Present only for workspace task tables; enables the assignee column
    * and workspace-aware delete permission (creator or owner/admin). */
-  workspaceId?: number
+  workspaceId?: string
   members?: WorkspaceMember[]
-  currentUserId?: number
+  currentUserId?: string
   currentUserRole?: WorkspaceRole
 }
 
@@ -40,7 +40,7 @@ export function useTaskColumns({
   currentUserRole,
 }: UseTaskColumnsOptions): ColumnDef<Task>[] {
   const deletePersonalTask = useDeletePersonalTask()
-  const deleteWorkspaceTask = useDeleteWorkspaceTask(workspaceId ?? -1)
+  const deleteWorkspaceTask = useDeleteWorkspaceTask(workspaceId ?? "")
 
   const memberByIdMap = new Map(members.map((m) => [m.user_id, m.user]))
 

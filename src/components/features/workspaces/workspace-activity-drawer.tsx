@@ -16,7 +16,7 @@ import { WorkspaceActivityTab } from "@/components/features/workspaces/workspace
 /** Experimental right-side drawer for workspace activity, replacing the
  * Activity tab. Opens over the current view so activity can be checked
  * without leaving the board/table. */
-export function WorkspaceActivityDrawer({ workspaceId }: { workspaceId: number }) {
+export function WorkspaceActivityDrawer({ workspaceId }: { workspaceId: string }) {
   return (
     <Sheet>
       <SheetTrigger asChild>

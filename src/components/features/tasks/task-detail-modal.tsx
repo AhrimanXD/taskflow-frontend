@@ -60,7 +60,7 @@ function toDateInputValue(value: string | null): string {
 interface TaskDetailModalProps {
   task: Task
   trigger: React.ReactNode
-  workspaceId?: number
+  workspaceId?: string
   members?: WorkspaceMember[]
 }
 
@@ -82,7 +82,7 @@ export function TaskDetailModal({ task, trigger, workspaceId, members = [] }: Ta
   const [conflictMessage, setConflictMessage] = useState<string | null>(null)
 
   const updatePersonalTask = useUpdatePersonalTask()
-  const updateWorkspaceTask = useUpdateWorkspaceTask(workspaceId ?? -1)
+  const updateWorkspaceTask = useUpdateWorkspaceTask(workspaceId ?? "")
 
   const { data: workspaces } = useWorkspaces()
   const workspaceName =
@@ -136,7 +136,7 @@ export function TaskDetailModal({ task, trigger, workspaceId, members = [] }: Ta
       priority,
       due_date: dueDate ? new Date(dueDate).toISOString() : null,
       ...(workspaceId !== undefined
-        ? { assignee_id: assigneeId !== UNASSIGNED ? Number(assigneeId) : null }
+        ? { assignee_id: assigneeId !== UNASSIGNED ? assigneeId : null }
         : {}),
     }
 
@@ -153,10 +153,12 @@ export function TaskDetailModal({ task, trigger, workspaceId, members = [] }: Ta
       }
     } catch (error) {
       if (error instanceof ApiError && error.status === 409) {
-        const conflict = error.detail as TaskConflict
-        applyServerTask(conflict.current)
+        // FastAPI wraps HTTPException(detail=…), so the conflict payload
+        // ({ message, current }) sits under the response body's `detail`.
+        const conflict = (error.detail as { detail?: TaskConflict } | null)?.detail
+        if (conflict?.current) applyServerTask(conflict.current)
         setConflictMessage(
-          conflict.message ||
+          conflict?.message ||
             "This task was changed by someone else. The latest version has been loaded — please redo your edit."
         )
       }

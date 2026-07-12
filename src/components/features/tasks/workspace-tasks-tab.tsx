@@ -16,7 +16,7 @@ import { useAuth } from "@/lib/auth/auth-provider"
 import type { WorkspaceMember } from "@/types/api"
 
 interface WorkspaceTasksTabProps {
-  workspaceId: number
+  workspaceId: string
   members: WorkspaceMember[]
 }
 

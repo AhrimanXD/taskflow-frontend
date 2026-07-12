@@ -25,7 +25,7 @@ import { useAuth } from "@/lib/auth/auth-provider"
 
 export default function WorkspaceDetailPage() {
   const params = useParams<{ id: string }>()
-  const workspaceId = Number(params.id)
+  const workspaceId = params.id
   const router = useRouter()
   const { user } = useAuth()
 

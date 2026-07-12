@@ -16,21 +16,21 @@ export const workspacesApi = {
   create: (payload: WorkspaceCreatePayload) =>
     api.post<Workspace>("/api/workspaces", payload),
 
-  get: (id: number) => api.get<Workspace>(`/api/workspaces/${id}`),
+  get: (id: string) => api.get<Workspace>(`/api/workspaces/${id}`),
 
-  update: (id: number, payload: WorkspaceUpdatePayload) =>
+  update: (id: string, payload: WorkspaceUpdatePayload) =>
     api.patch<Workspace>(`/api/workspaces/${id}`, payload),
 
-  remove: (id: number) => api.delete<void>(`/api/workspaces/${id}`),
+  remove: (id: string) => api.delete<void>(`/api/workspaces/${id}`),
 
-  members: (id: number) =>
+  members: (id: string) =>
     api.get<WorkspaceMember[]>(`/api/workspaces/${id}/members`),
 
-  leave: (id: number) => api.delete<void>(`/api/workspaces/${id}/members/me`),
+  leave: (id: string) => api.delete<void>(`/api/workspaces/${id}/members/me`),
 
-  updateMemberRole: (id: number, userId: number, role: WorkspaceRole) =>
+  updateMemberRole: (id: string, userId: string, role: WorkspaceRole) =>
     api.patch<WorkspaceMember>(`/api/workspaces/${id}/members/${userId}`, { role }),
 
-  removeMember: (id: number, userId: number) =>
+  removeMember: (id: string, userId: string) =>
     api.delete<void>(`/api/workspaces/${id}/members/${userId}`),
 }

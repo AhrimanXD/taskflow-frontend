@@ -15,10 +15,10 @@ import type { WorkspaceMember } from "@/types/api"
 interface WorkspaceMembersTabProps {
   members: WorkspaceMember[]
   isLoading?: boolean
-  workspaceId: number
+  workspaceId: string
   canManage?: boolean
   isOwner?: boolean
-  currentUserId?: number
+  currentUserId?: string
 }
 
 export function WorkspaceMembersTab({

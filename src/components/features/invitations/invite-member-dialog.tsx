@@ -35,7 +35,7 @@ import { useCreateInvitation } from "@/hooks/queries/use-invitations"
 import { invitationSchema, type InvitationFormValues } from "@/lib/validation/invitation"
 
 interface InviteMemberDialogProps {
-  workspaceId: number
+  workspaceId: string
   trigger: React.ReactNode
 }
 

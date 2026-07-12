@@ -14,13 +14,13 @@ import { useRemoveMember, useUpdateMemberRole } from "@/hooks/queries/use-worksp
 import type { WorkspaceMember } from "@/types/api"
 
 interface WorkspaceMemberMenuProps {
-  workspaceId: number
+  workspaceId: string
   member: WorkspaceMember
   /** The current user is the workspace owner (can change roles). */
   isOwner: boolean
   /** The current user is owner or admin (can remove members). */
   canManage: boolean
-  currentUserId?: number
+  currentUserId?: string
 }
 
 export function WorkspaceMemberMenu({

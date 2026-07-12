@@ -38,7 +38,7 @@ interface WorkspaceFormDialogProps {
 export function WorkspaceFormDialog({ mode, workspace, trigger }: WorkspaceFormDialogProps) {
   const [open, setOpen] = useState(false)
   const createWorkspace = useCreateWorkspace()
-  const updateWorkspace = useUpdateWorkspace(workspace?.id ?? -1)
+  const updateWorkspace = useUpdateWorkspace(workspace?.id ?? "")
 
   const form = useForm<WorkspaceFormValues>({
     resolver: zodResolver(workspaceSchema),
