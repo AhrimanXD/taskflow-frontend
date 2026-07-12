@@ -7,10 +7,15 @@ import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { SidebarNav } from "@/components/features/dashboard/sidebar-nav"
 import { UserMenu } from "@/components/features/dashboard/user-menu"
+import { NotificationBell } from "@/components/features/notifications/notification-bell"
 import { ThemeToggle } from "@/components/common/theme-toggle"
+import { useNotificationsSocket } from "@/hooks/use-notifications-socket"
+import { useAuth } from "@/lib/auth/auth-provider"
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
+  const { user } = useAuth()
+  useNotificationsSocket(!!user)
 
   return (
     <div className="flex min-h-screen w-full">
@@ -34,6 +39,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
           </Sheet>
 
           <div className="ml-auto flex items-center gap-2">
+            <NotificationBell />
             <ThemeToggle />
             <UserMenu />
           </div>

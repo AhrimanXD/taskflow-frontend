@@ -4,7 +4,12 @@ import { toast } from "sonner"
 import { workspacesApi } from "@/lib/api/endpoints/workspaces"
 import { ApiError } from "@/lib/api/client"
 import { queryKeys } from "@/constants/query-keys"
-import type { ListParams, WorkspaceCreatePayload, WorkspaceUpdatePayload } from "@/types/api"
+import type {
+  ListParams,
+  WorkspaceCreatePayload,
+  WorkspaceRole,
+  WorkspaceUpdatePayload,
+} from "@/types/api"
 
 function errorMessage(error: unknown, fallback: string) {
   return error instanceof ApiError ? error.message : fallback
@@ -79,5 +84,30 @@ export function useLeaveWorkspace() {
       toast.success("Left workspace")
     },
     onError: (error) => toast.error(errorMessage(error, "Failed to leave workspace")),
+  })
+}
+
+export function useUpdateMemberRole(workspaceId: number) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ userId, role }: { userId: number; role: WorkspaceRole }) =>
+      workspacesApi.updateMemberRole(workspaceId, userId, role),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.workspaces.members(workspaceId) })
+      toast.success("Role updated")
+    },
+    onError: (error) => toast.error(errorMessage(error, "Failed to update role")),
+  })
+}
+
+export function useRemoveMember(workspaceId: number) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (userId: number) => workspacesApi.removeMember(workspaceId, userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.workspaces.members(workspaceId) })
+      toast.success("Member removed")
+    },
+    onError: (error) => toast.error(errorMessage(error, "Failed to remove member")),
   })
 }

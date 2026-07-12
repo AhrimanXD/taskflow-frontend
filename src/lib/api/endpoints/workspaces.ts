@@ -5,6 +5,7 @@ import type {
   Workspace,
   WorkspaceCreatePayload,
   WorkspaceMember,
+  WorkspaceRole,
   WorkspaceUpdatePayload,
 } from "@/types/api"
 
@@ -26,4 +27,10 @@ export const workspacesApi = {
     api.get<WorkspaceMember[]>(`/api/workspaces/${id}/members`),
 
   leave: (id: number) => api.delete<void>(`/api/workspaces/${id}/members/me`),
+
+  updateMemberRole: (id: number, userId: number, role: WorkspaceRole) =>
+    api.patch<WorkspaceMember>(`/api/workspaces/${id}/members/${userId}`, { role }),
+
+  removeMember: (id: number, userId: number) =>
+    api.delete<void>(`/api/workspaces/${id}/members/${userId}`),
 }

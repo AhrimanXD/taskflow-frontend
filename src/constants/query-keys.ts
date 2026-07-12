@@ -41,4 +41,9 @@ export const queryKeys = {
   stats: {
     overview: () => ["stats", "overview"] as const,
   },
+  notifications: {
+    all: () => ["notifications"] as const,
+    list: (params: ListParams) => ["notifications", "list", params] as const,
+    unreadCount: () => ["notifications", "unread-count"] as const,
+  },
 }

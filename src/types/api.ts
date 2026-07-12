@@ -192,3 +192,28 @@ export type WorkspaceWsEvent = TaskWsEvent | CommentWsEvent | ActivityWsEvent
 export type WsAuthEvent =
   | { type: "success"; detail: string }
   | { type: "error"; detail: string }
+
+export interface ProfileUpdatePayload {
+  username?: string
+  email?: string
+}
+
+export interface ChangePasswordPayload {
+  current_password: string
+  new_password: string
+}
+
+export interface Notification {
+  id: number
+  type: string
+  message: string
+  workspace_id: number | null
+  is_read: boolean
+  created_at: string
+  actor: UserPublic | null
+}
+
+export type NotificationWsEvent = {
+  type: "notification.created"
+  notification: Notification
+}

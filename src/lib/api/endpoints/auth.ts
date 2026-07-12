@@ -1,5 +1,12 @@
 import { api } from "@/lib/api/client"
-import type { LoginPayload, RegisterPayload, Token, User } from "@/types/api"
+import type {
+  ChangePasswordPayload,
+  LoginPayload,
+  ProfileUpdatePayload,
+  RegisterPayload,
+  Token,
+  User,
+} from "@/types/api"
 
 export const authApi = {
   register: (payload: RegisterPayload) =>
@@ -15,4 +22,10 @@ export const authApi = {
     ),
 
   me: () => api.get<User>("/api/auth/me"),
+
+  updateProfile: (payload: ProfileUpdatePayload) =>
+    api.patch<User>("/api/auth/me", payload),
+
+  changePassword: (payload: ChangePasswordPayload) =>
+    api.post<void>("/api/auth/change-password", payload),
 }

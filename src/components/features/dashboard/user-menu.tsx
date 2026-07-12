@@ -1,6 +1,7 @@
 "use client"
 
-import { LogOut } from "lucide-react"
+import Link from "next/link"
+import { LogOut, Settings } from "lucide-react"
 
 import {
   DropdownMenu,
@@ -33,6 +34,13 @@ export function UserMenu() {
           </span>
           <span className="text-xs text-muted-foreground">{user.email}</span>
         </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link href="/settings">
+            <Settings className="size-4" />
+            Settings
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem variant="destructive" onSelect={() => logout()}>
           <LogOut className="size-4" />

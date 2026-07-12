@@ -119,6 +119,8 @@ export default function WorkspaceDetailPage() {
             isLoading={isMembersLoading}
             workspaceId={workspaceId}
             canManage={canManage}
+            isOwner={isOwner}
+            currentUserId={user?.id}
           />
         </TabsContent>
         <TabsContent value="activity" className="mt-4">

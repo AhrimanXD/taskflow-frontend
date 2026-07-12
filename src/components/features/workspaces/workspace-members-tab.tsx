@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { EmptyState } from "@/components/common/empty-state"
 import { InviteMemberDialog } from "@/components/features/invitations/invite-member-dialog"
+import { WorkspaceMemberMenu } from "@/components/features/workspaces/workspace-member-menu"
 import { initials } from "@/lib/utils/format"
 import type { WorkspaceMember } from "@/types/api"
 
@@ -16,6 +17,8 @@ interface WorkspaceMembersTabProps {
   isLoading?: boolean
   workspaceId: number
   canManage?: boolean
+  isOwner?: boolean
+  currentUserId?: number
 }
 
 export function WorkspaceMembersTab({
@@ -23,6 +26,8 @@ export function WorkspaceMembersTab({
   isLoading,
   workspaceId,
   canManage,
+  isOwner,
+  currentUserId,
 }: WorkspaceMembersTabProps) {
   const inviteButton = canManage ? (
     <InviteMemberDialog
@@ -79,12 +84,21 @@ export function WorkspaceMembersTab({
                 {member.user.username}
               </p>
             </div>
-            <Badge
-              variant={member.role === "owner" ? "default" : "outline"}
-              className="shrink-0 capitalize"
-            >
-              {member.role}
-            </Badge>
+            <div className="flex shrink-0 items-center gap-1">
+              <Badge
+                variant={member.role === "owner" ? "default" : "outline"}
+                className="capitalize"
+              >
+                {member.role}
+              </Badge>
+              <WorkspaceMemberMenu
+                workspaceId={workspaceId}
+                member={member}
+                isOwner={!!isOwner}
+                canManage={!!canManage}
+                currentUserId={currentUserId}
+              />
+            </div>
           </div>
         ))}
       </div>
