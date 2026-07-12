@@ -54,6 +54,19 @@ export function BoardCard({ task, workspaceId, members = [], overlay = false }: 
       style={style}
       {...(overlay ? {} : attributes)}
       {...(overlay ? {} : listeners)}
+      onKeyDown={
+        overlay
+          ? undefined
+          : (event) => {
+              // React portals bubble events through the React tree, so keys
+              // typed in the portaled detail modal/sheet (e.g. the comment
+              // box) would otherwise reach dnd-kit's keyboard sensor here and
+              // be treated as pick-up/drop. Only start a drag from the card
+              // itself, never from a bubbled descendant/portal event.
+              if (event.target !== event.currentTarget) return
+              listeners?.onKeyDown?.(event)
+            }
+      }
       className={cn(
         "group rounded-lg border border-border bg-card p-3 shadow-sm",
         !overlay && "cursor-grab touch-none hover:border-foreground/20 active:cursor-grabbing",
