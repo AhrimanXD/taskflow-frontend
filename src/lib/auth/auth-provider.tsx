@@ -13,7 +13,7 @@ import { toast } from "sonner"
 
 import { authApi } from "@/lib/api/endpoints/auth"
 import { ApiError, setUnauthorizedHandler } from "@/lib/api/client"
-import { getToken, setToken } from "@/lib/auth/token"
+import { clearTokens, getToken, setTokens } from "@/lib/auth/token"
 import { queryKeys } from "@/constants/query-keys"
 import type { LoginPayload, RegisterPayload, User } from "@/types/api"
 
@@ -50,7 +50,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   })
 
   const logout = useCallback(() => {
-    setToken(null)
+    clearTokens()
     setHasToken(false)
     queryClient.removeQueries({ queryKey: queryKeys.auth.me() })
     queryClient.clear()
@@ -65,7 +65,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const loginMutation = useMutation({
     mutationFn: authApi.login,
     onSuccess: async (token) => {
-      setToken(token.access_token)
+      setTokens(token.access_token, token.refresh_token)
       setHasToken(true)
       await queryClient.invalidateQueries({ queryKey: queryKeys.auth.me() })
     },
