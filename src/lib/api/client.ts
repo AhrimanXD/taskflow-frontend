@@ -1,4 +1,9 @@
-import { getToken, setToken } from "@/lib/auth/token"
+import {
+  clearTokens,
+  getRefreshToken,
+  getToken,
+  setTokens,
+} from "@/lib/auth/token"
 
 export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000"
@@ -20,6 +25,38 @@ export class ApiError extends Error {
 let unauthorizedHandler: (() => void) | null = null
 export function setUnauthorizedHandler(handler: (() => void) | null) {
   unauthorizedHandler = handler
+}
+
+// Single-flight refresh: many requests can 401 at once (e.g. a dashboard
+// firing several queries), but only one refresh call should go out. The rest
+// await the same promise, then retry with the new access token.
+let refreshInFlight: Promise<boolean> | null = null
+
+async function performRefresh(): Promise<boolean> {
+  const refresh = getRefreshToken()
+  if (!refresh) return false
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/auth/refresh`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refresh_token: refresh }),
+    })
+    if (!res.ok) return false
+    const data = (await res.json()) as { access_token: string; refresh_token: string }
+    setTokens(data.access_token, data.refresh_token)
+    return true
+  } catch {
+    return false
+  }
+}
+
+function refreshSession(): Promise<boolean> {
+  if (!refreshInFlight) {
+    refreshInFlight = performRefresh().finally(() => {
+      refreshInFlight = null
+    })
+  }
+  return refreshInFlight
 }
 
 function extractMessage(body: unknown, fallback: string): string {
@@ -54,10 +91,13 @@ interface RequestOptions extends Omit<RequestInit, "body"> {
   /** Send as application/x-www-form-urlencoded instead of JSON. */
   form?: Record<string, string>
   auth?: boolean
+  /** Internal: set on the single retry after a successful token refresh, so a
+   * second 401 doesn't loop back into another refresh attempt. */
+  _retry?: boolean
 }
 
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const { body, form, auth = true, headers, ...rest } = options
+  const { body, form, auth = true, _retry = false, headers, ...rest } = options
 
   const finalHeaders = new Headers(headers)
   let finalBody: BodyInit | undefined
@@ -81,12 +121,20 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     body: finalBody,
   })
 
+  // An authed request that 401s may just have a stale (expired) access token.
+  // Try one refresh, and if it works, replay the original request once.
+  if (res.status === 401 && auth && !_retry) {
+    const refreshed = await refreshSession()
+    if (refreshed) {
+      return request<T>(path, { ...options, _retry: true })
+    }
+    // Refresh token missing or also expired — the session is truly over.
+    clearTokens()
+    unauthorizedHandler?.()
+  }
+
   if (!res.ok) {
     const parsed = await parseBody(res)
-    if (res.status === 401) {
-      setToken(null)
-      unauthorizedHandler?.()
-    }
     throw new ApiError(
       res.status,
       extractMessage(parsed, `Request failed with status ${res.status}`),

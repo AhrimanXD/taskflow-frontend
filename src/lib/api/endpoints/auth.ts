@@ -5,6 +5,7 @@ import type {
   ProfileUpdatePayload,
   RegisterPayload,
   Token,
+  TokenRefreshPayload,
   User,
 } from "@/types/api"
 
@@ -20,6 +21,9 @@ export const authApi = {
       { username: payload.email, password: payload.password },
       { auth: false }
     ),
+
+  refresh: (payload: TokenRefreshPayload) =>
+    api.post<Token>("/api/auth/refresh", payload, { auth: false }),
 
   me: () => api.get<User>("/api/auth/me"),
 
